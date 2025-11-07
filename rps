@@ -1,28 +1,28 @@
 import random
 # 1 = rock, 2 = paper, 3 = scissors
 def game(player):
-    select = [1, 2, 3]
+    select = ['r', 'p', 's']
     computer = random.choice(select)
 
     if player == computer:
         print("It's a draw!")
-    elif (player == 1 and computer == 2):
+    elif (player == 'r' and computer == 'p'):
         print("""You chose rock. I chose paper.
         You lost :(""")
-    elif (player == 2 and computer == 3):
+    elif (player == 'p' and computer == 's'):
         print("""You chose paper. I chose scissors
         You lost :(""")
-    elif (player == 3 and computer == 1):
+    elif (player == 's' and computer == 'r'):
         print("""You chose scissors. I chose rock. 
-        You lost :(1""")
+        You lost :(""")
     else:
         print("You won !!")
 
 while True:
     print("Rock, Paper, or Scissors?")
-    x = input("Type 1 for Rock, 2, for Paper, or 3 for Scissors: ")
+    x = input('Your answer here:')
 
-    player = int(x)
+    player = x[0].lower()
     game(player)
 
     again = input("Do you want to play again? (y/n)")
