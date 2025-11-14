@@ -1,31 +1,105 @@
+import pygame
 import random
-# 1 = rock, 2 = paper, 3 = scissors
-def game(player):
-    select = ['r', 'p', 's']
-    computer = random.choice(select)
+import sys
+
+pygame.init()
+
+score = 0
+
+result_text = ""
+player_choice = ""
+computer_choice = ""
+
+#defining buttons
+class Button:
+    def __init__(self, x, y, width, height, text):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.text = text
+
+    def draw(self, win):
+        pygame.draw.rect(win, (200, 200, 200), self.rect)  # light gray
+        pygame.draw.rect(win, (0,0,0), self.rect, 2)        # border
+
+        # Draw text
+        label = font.render(self.text, True, (0,0,0))
+        # center text in button
+        label_rect = label.get_rect(center=self.rect.center)
+        win.blit(label, label_rect)
+
+    def is_clicked(self, pos):
+        return self.rect.collidepoint(pos)
+
+#graphics
+Width, Height = 640, 480
+win = pygame.display.set_mode((Width, Height))
+pygame.display.set_caption("Rock Paper Scissors")
+
+rock_btn = Button(50, 350, 150, 50, "Rock")
+paper_btn = Button(245, 350, 150, 50, "Paper")
+scissors_btn = Button(440, 350, 150, 50, "Scissors")
+
+font = pygame.font.SysFont("verdana", 30)
+#colors
+pink = (255,192,203)
+matcha_green = (139,168,136)
+white = (255,255,255)
+
+#game code
+choice = ["rock", "paper", "scissors"]
+def result(player, computer):
+
+    global score
+    score +=1
 
     if player == computer:
-        print("It's a draw!")
-    elif (player == 'r' and computer == 'p'):
-        print("""You chose rock. I chose paper.
-        You lost :(""")
-    elif (player == 'p' and computer == 's'):
-        print("""You chose paper. I chose scissors
-        You lost :(""")
-    elif (player == 's' and computer == 'r'):
-        print("""You chose scissors. I chose rock. 
-        You lost :(""")
+        return "It's a Draw!"
+    if (player == "rock" and computer == "scissors") or (player == "paper" and computer == "rock") or (player == "scissors" and computer == "paper"):
+        score += 1
+        return "You win!"
     else:
-        print("You won !!")
+        return "You lose!"
 
+#graphics integration
 while True:
-    print("Rock, Paper, or Scissors?")
-    x = input('Your answer here:')
+    win.fill(pink)
 
-    player = x[0].lower()
-    game(player)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
 
-    again = input("Do you want to play again? (y/n)")
-    if again == "n":
-        print("Thanks for playing!")
-        break
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+
+            if rock_btn.is_clicked(pos):
+                computer = random.choice(choice)
+                result_text = result("rock", computer)
+                player_choice, computer_choice = "rock", computer
+
+            elif paper_btn.is_clicked(pos):
+                computer = random.choice(choice)
+                result_text = result("paper", computer)
+                player_choice, computer_choice = "paper", computer
+
+            elif scissors_btn.is_clicked(pos):
+                computer = random.choice(choice)
+                result_text = result("scissors", computer)
+                player_choice, computer_choice = "scissors", computer
+    #UI !
+    rock_btn.draw(win)
+    paper_btn.draw(win)
+    scissors_btn.draw(win)
+
+    score_label = font.render(f"Player: {score}", True, matcha_green)
+    win.blit(score_label, (100,25))
+
+    if result_text != "":
+        result_label = font.render(result_text, True, matcha_green)
+        win.blit(result_label, (100,100))
+
+        choice_label= font.render (
+            f"You: {player_choice}", True, matcha_green
+        )
+        win.blit(choice_label, (100,140))
+
+    pygame.display.update()
