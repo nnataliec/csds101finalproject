@@ -1,0 +1,91 @@
+import pygame
+import random
+
+pygame.init()
+
+# Window setup
+WIDTH, HEIGHT = 800, 600
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Hangman")
+
+FPS = 60
+clock = pygame.time.Clock()
+
+# Load hangman images
+images = []
+for i in range(7):
+    image = pygame.image.load(f"hangman{i}.png")
+    images.append(image)
+
+# Words to guess
+wordlist = ['man', 'woman', 'child', 'teacher', 'doctor', 'student', 'friend', 'mother', 'father', 'artist', 'manager', 'soldier', 'chef', 'school', 'park', 'city', 'village', 'country', 'home', 'office', 'garden', 'street', 'river', 'ocean', 'airport', 'library', 'book', 'car', 'computer', 'phone', 'table', 'chair', 'door', 'window', 'bottle', 'mirror', 'jacket', 'lamp', 'apple', 'water', 'music', 'air', 'dog', 'cat', 'elephant', 'bird', 'snake', 'love', 'happiness', 'anger', 'fear', 'hope', 'time', 'justice', 'science', 'history', 'education', 'information', 'freedom', 'peace', 'research', 'change', 'team', 'family', 'group', 'jury', 'audience', 'army', 'flock', 'basketball', 'toothpaste', 'haircut', 'information', 'water', 'rice', 'air', 'information', 'music', 'knowledge', 'swimming', 'running', 'dancing', 'cooking', 'apple', 'artist', 'air', 'bank', 'car', 'city', 'dog', 'doctor', 'door', 'education', 'egg', 'family', 'fire', 'flower', 'friend', 'game', 'garden', 'hair', 'history', 'home', 'idea', 'justice', 'key', 'library', 'life', 'love', 'machine', 'map', 'money', 'moon', 'mountain', 'movie', 'music', 'name', 'night', 'ocean', 'paper', 'park', 'people', 'phone', 'planet', 'problem', 'queen', 'rain', 'reason', 'research', 'river', 'road', 'room', 'school', 'science', 'shelf', 'shirt', 'silence', 'sky', 'snow', 'song', 'space', 'star', 'story', 'sun', 'system', 'table', 'teacher', 'time', 'town', 'train', 'travel', 'tree', 'voice', 'wall', 'war', 'water', 'way', 'week', 'wind', 'window', 'wood', 'word', 'work', 'world', 'writer', 'year']
+word = random.choice(wordlist).upper()
+
+# Game state
+guessed_letters = set()
+guessed_word_display = ["_" for _ in word]
+hangman_status = 0
+MAX_WRONG = 6
+
+FONT_WORD = pygame.font.SysFont("comicsans", 60)
+FONT_INFO = pygame.font.SysFont("comicsans", 35)
+
+
+def draw_game():
+    WIN.fill((255, 255, 255))
+
+    # Draw hangman image
+    WIN.blit(images[hangman_status], (150, 100))
+
+    # Draw word display
+    word_text = FONT_WORD.render(" ".join(guessed_word_display), True, (0, 0, 0))
+    WIN.blit(word_text, (WIDTH // 2 - word_text.get_width() // 2, 400))
+
+    # Draw guessed letters
+    guessed_text = FONT_INFO.render(
+        f"Guessed: {' '.join(sorted(guessed_letters))}",
+        True, (0, 0, 0)
+    )
+    WIN.blit(guessed_text, (50, 500))
+
+    pygame.display.update()
+
+
+run = True
+while run:
+    clock.tick(FPS)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+
+        if event.type == pygame.KEYDOWN:
+            if pygame.K_a <= event.key <= pygame.K_z:
+                char = chr(event.key).upper()
+
+                if char not in guessed_letters:
+                    guessed_letters.add(char)
+
+                if char in word:
+                    # Reveal letters
+                    for i in range(len(word)):
+                        if word[i] == char:
+                            guessed_word_display[i] = char
+                else:
+                    hangman_status += 1
+
+    draw_game()
+
+    # Win condition
+    if "_" not in guessed_word_display:
+        print("You won!")
+        pygame.time.delay(2000)
+        run = False
+
+    # Lose condition
+    if hangman_status >= MAX_WRONG:
+        print("You lost! The word was:", word)
+        pygame.time.delay(2000)
+        run = False
+
+pygame.quit()
