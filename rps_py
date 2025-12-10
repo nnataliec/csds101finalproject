@@ -10,26 +10,23 @@ result_text = ""
 player_choice = ""
 computer_choice = ""
 
-#defining buttons
+
 class Button:
     def __init__(self, x, y, width, height, text):
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
 
     def draw(self, win):
-        pygame.draw.rect(win, (200, 200, 200), self.rect)  # light gray
-        pygame.draw.rect(win, (0,0,0), self.rect, 2)        # border
+        pygame.draw.rect(win, (200, 200, 200), self.rect)
+        pygame.draw.rect(win, (0,0,0), self.rect, 2)       
 
-        # Draw text
         label = font.render(self.text, True, (0,0,0))
-        # center text in button
         label_rect = label.get_rect(center=self.rect.center)
         win.blit(label, label_rect)
 
     def is_clicked(self, pos):
         return self.rect.collidepoint(pos)
 
-#graphics
 Width, Height = 640, 480
 win = pygame.display.set_mode((Width, Height))
 pygame.display.set_caption("Rock Paper Scissors")
@@ -39,12 +36,10 @@ paper_btn = Button(245, 350, 150, 50, "Paper")
 scissors_btn = Button(440, 350, 150, 50, "Scissors")
 
 font = pygame.font.SysFont("verdana", 30)
-#colors
 pink = (255,192,203)
 matcha_green = (139,168,136)
 white = (255,255,255)
 
-#game code
 choice = ["rock", "paper", "scissors"]
 def result(player, computer):
 
@@ -59,7 +54,6 @@ def result(player, computer):
     else:
         return "You lose!"
 
-#graphics integration
 while True:
     win.fill(pink)
 
@@ -85,7 +79,7 @@ while True:
                 computer = random.choice(choice)
                 result_text = result("scissors", computer)
                 player_choice, computer_choice = "scissors", computer
-    #UI !
+
     rock_btn.draw(win)
     paper_btn.draw(win)
     scissors_btn.draw(win)
